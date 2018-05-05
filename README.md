@@ -24,7 +24,6 @@ Although I've followed the Pasmo specification (see [pasmo.md](https://github.co
 - Hexadecimal numbers are expected to be upper case.
 - Pasmo identifiers, directives, labels, etc., are expected to be upper case.
 - Only double-quoted strings are currently supported.
-- Labels starting with an underscore are not supported.
 
 There may be other small deviations - otherwise known as bugs! If you encountered something that is not correct, please consider submitting an issue.
 

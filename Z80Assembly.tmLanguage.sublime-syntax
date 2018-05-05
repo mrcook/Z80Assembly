@@ -6,7 +6,7 @@ file_extensions: [asm, s, z80, ASM, S, Z80]
 scope: source.z80
 
 variables:
-  label: '\b[A-Z0-9_]+[A-Z0-9]\b'
+  label: '\b[a-zA-Z0-9_]+[a-zA-Z0-9]\b'
   conditionals: '\b(?:NC|NZ|PE|PO|C|M|P|Z)\b'
   binary: '(?:%[01]+|[01]+B)\b'
   octal: '(?:&O[0-7]+|[0-7]+[OQ])\b'
@@ -23,17 +23,16 @@ contexts:
   main:
     # The main context is the initial starting point of our syntax.
     # Include other contexts from here (or specify them directly).
-    - include: labels
     - include: identifiers
     - include: directives
     - include: directives_data
     - include: opcodes
     - include: operators
     - include: registers
+    - include: labels
     - include: addresses
     - include: numbers
     - include: strings
-    - include: misc
 
   registers:
     - match: '\b(AF|BC|DE|HL)'''
@@ -78,11 +77,6 @@ contexts:
       scope: keyword.control.z80
     - match: '\s(!=|##|&&|<<|<=|>>|>=|\|\||[&$%*+/=?~><|!-])\s'
       scope: keyword.control.z80
-
-  labels:
-    - match: '^({{label}}):?$'
-      captures:
-        1: entity.name.function.z80
 
   identifiers:
     - match: '(^|\s+)(DEFL|EQU|MACRO|IRP|REPT|EXITM|ENDM)\s'
@@ -132,10 +126,18 @@ contexts:
       scope: punctuation.definition.string.end.z80
       pop: true
 
-  misc:
+  labels:
+    - match: '^({{label}}):?$'
+      comment: 'Label definition'
+      captures:
+        1: entity.name.function.z80
     - match: '\({{label}}\)'
       comment: 'Address of label'
       scope: variable.parameter.z80
+    - match: ',({{label}})\b'
+      comment: 'Labels used in instructions'
+      captures:
+        1: variable.function.z80
 
   comments:
     - match: ';'
