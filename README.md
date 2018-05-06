@@ -22,7 +22,7 @@ First, locate the SublimeText [packages folder](http://docs.sublimetext.info/en/
 Although I've followed the Pasmo specification (see [pasmo.md](https://github.com/mrcook/Z80Assembly/blob/master/docs/pasmo.md)) this package deviates a little.
 
 - Hexadecimal numbers are expected to be upper case.
-- Pasmo identifiers, directives, labels, etc., are expected to be upper case.
+- Pasmo identifiers, directives, etc., are expected to be upper case.
 - Only double-quoted strings are currently supported.
 
 There may be other small deviations - otherwise known as bugs! If you encountered something that is not correct, please consider submitting an issue.
