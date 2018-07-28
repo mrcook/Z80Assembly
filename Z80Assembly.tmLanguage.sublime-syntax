@@ -6,13 +6,14 @@ file_extensions: [asm, s, z80, ASM, S, Z80]
 scope: source.z80
 
 variables:
-  label: '\b[a-zA-Z0-9_]+[a-zA-Z0-9]\b'
-  conditionals: '\b(?:NC|NZ|PE|PO|C|M|P|Z)\b'
+  label: '\b[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]\b'
+  conditionals: '(?i)\b(?:NC|NZ|PE|PO|C|M|P|Z)\b'
   binary: '(?:%[01]+|[01]+B)\b'
   octal: '(?:&O[0-7]+|[0-7]+[OQ])\b'
-  hexidecimal: '(?:&[HX][0-9A-F]{2}|[$#&][0-9A-F]{2}|\b0X[0-9A-F]{2}|\b0[A-F]{2}H|\b[0-9]{2}H)\b'
-  decimal: '\b(?:[0-9]+D|[0-9]+)\b'
-  address: '(?:&[HX][0-9A-F]{4}|[$#&][0-9A-F]{4}|\b0X[0-9A-F]{4}|\b0[A-F]{4}H|\b[0-9]{4}H|[0-9]{4,5}D)\b'
+  hexidecimal: '(?:&[HX][0-9a-fA-F]{2}|[$#&][0-9a-fA-F]{2}|\b0X[0-9a-fA-F]{2}|\b0[a-fA-F]{2}H|\b[0-9]{2}H)\b'
+  decimal: '(?:[0-9]+D|[0-9]+)'
+  address: '(?:&[HX][0-9a-fA-F]{4}|[$#&][0-9a-fA-F]{4}|\b0X[0-9a-fA-F]{4}|\b0[a-fA-F]{4}H|\b[0-9]{4}H|[0-9]{4,5}D)\b'
+  number: '(?:{{binary}}|{{octal}}|{{hexidecimal}}|{{decimal}})'
 
 contexts:
   # The prototype context is prepended to all contexts but those setting
@@ -23,6 +24,7 @@ contexts:
   main:
     # The main context is the initial starting point of our syntax.
     # Include other contexts from here (or specify them directly).
+    - include: strings
     - include: identifiers
     - include: directives
     - include: directives_data
@@ -32,70 +34,73 @@ contexts:
     - include: labels
     - include: addresses
     - include: numbers
-    - include: strings
 
   registers:
-    - match: '\b(AF|BC|DE|HL)'''
+    - match: '(?i)\b(AF|BC|DE|HL)'''
       comment: '16-bit shadow registers (note: escaped single quote)'
       scope: variable.function.z80
-    - match: '\b(AF|BC|DE|HL|PC|SP|IX|IY)\b'
+    - match: '(?i)\b(AF|BC|DE|HL|PC|SP|IX|IY)\b'
       comment: '16-bit registers'
       scope: variable.function.z80
-    - match: '\((AF|BC|DE|HL|SP|IX|IY|[0-9]+)(?:\+[0-9]+)?\)'
+    - match: '(?i)\((AF|BC|DE|HL|SP|IX|IY|{{number}}|{{label}})(?:\+{{number}})?\)'
       comment: 'Pointer to 16-bit register/address (incl. offsets)'
       scope: variable.parameter.z80
-    - match: '\b(HX|HY|LX|LY)\b'
+    - match: '(?i)\b(HX|HY|LX|LY)\b'
       comment: 'Undocumented 8-bit registers'
       scope: variable.other.member.z80
-    - match: '\b(A|B|C|D|E|F|H|I|L|R|IXH|IXL|IYH|IYL|LX|LY|YL|YH)\b'
+    - match: '(?i)\b([ABCDEFHILR]|IXH|IXL|IYH|IYL|LX|LY|YL|YH)\b'
       comment: '8-bit registers'
       scope: variable.other.z80
 
   opcodes:
-    - match: '\b(CALL|JP|JR|DJNZ)\s+({{conditionals}}),({{address}}|{{label}})\b'
+    - match: '(?i)\b(CALL|JP|JR|DJNZ)\s+({{conditionals}}),({{address}}|{{label}})\b'
       comment: 'Calls and jumps, with a condition'
       captures:
         1: keyword.control.z80
         2: keyword.control.conditional.z80
         3: variable.function.z80
-    - match: '\b(CALL|JP|JR|DJNZ)\s+({{address}}|{{label}})\b'
+    - match: '(?i)\b(CALL|JP|JR|DJNZ)\s+({{address}}|{{label}})\b'
       captures:
         1: keyword.control.z80
         2: variable.function.z80
-    - match: '\b(RET)(\s+{{conditionals}})?\b'
+    - match: '(?i)\b(RET)(\s+{{conditionals}})?\b'
       comment: 'RETurn, with an optional condition'
       captures:
         1: keyword.control.z80
         2: keyword.control.conditional.z80
-    - match: '\b(ADC|ADD|BIT|CCF|CP|CPL|CPD|CPDR|CPI|CPIR|DAA|DEC|DI|DJNZ|EI|EX|EXX|HALT|IM|IN|INC|IND|INDR|INF|INI|INIR||NEG|NOP|EXX|OR|OTDR|OTIR|OUT|OUTD|OUTI|POP|PUSH|RES|RETI|RETN|RL|RLA|RLC|RLCA|RLD|RR|RRA|RRC|RRCA|RRD|RST|SBC|SCF|SET|SLA|SLI|SLL|SRA|SRL|SUB)\b'
+    - match: '(?i)\b(ADC|ADD|BIT|CCF|CP|CPL|CPD|CPDR|CPI|CPIR|DAA|DEC|DI|DJNZ|EI|EX|EXX|HALT|IM|IN|INC|IND|INDR|INF|INI|INIR||NEG|NOP|EXX|OR|OTDR|OTIR|OUT|OUTD|OUTI|POP|PUSH|RES|RETI|RETN|RL|RLA|RLC|RLCA|RLD|RR|RRA|RRC|RRCA|RRD|RST|SBC|SCF|SET|SLA|SLI|SLL|SRA|SRL|SUB)\b'
       scope: keyword.control.z80
-    - match: '\b(LD|LDD|LDDR|LDI|LDIR)\b'
+    - match: '(?i)\b(LD|LDD|LDDR|LDI|LDIR)\b'
       scope: keyword.control.z80
 
   operators:
-    - match: '\b(AND|DEFINED|EQ|GE|GT|HIGH|LE|LOW|LT|MOD|NE|NOT|NUL|OR|SHL|SHR|XOR)\b'
+    - match: '(?i)\b(AND|DEFINED|EQ|GE|GT|HIGH|LE|LOW|LT|MOD|NE|NOT|NUL|OR|SHL|SHR|XOR)\b'
       scope: keyword.control.z80
     - match: '\s(!=|##|&&|<<|<=|>>|>=|\|\||[&$%*+/=?~><|!-])\s'
       scope: keyword.control.z80
 
   identifiers:
-    - match: '(^|\s+)(DEFL|EQU|MACRO|IRP|REPT|EXITM|ENDM)\s'
+    - match: '(?i)(^|\s+)(DEFL|EQU|MACRO|IRP|REPT|EXITM|ENDM)\s'
       scope: keyword.control.z80
 
   directives:
-    - match: '(^|\s+)(INCBIN|INCLUDE)\s'
+    - match: '(?i)(^|\s+)(INCBIN|INCLUDE)\s'
       scope: keyword.control.import.z80
-    - match: '(^|\s+)(LOCAL|ORG|END|PUBLIC)\s'
+    - match: '(?i)(^|\s+)(LOCAL|ORG|END|PUBLIC)\s'
       scope: keyword.control.z80
-    - match: '(^|\s+)(PROC|ENDP)\s'
+    - match: '(?i)(^|\s+)(PROC|ENDP)\s'
       scope: keyword.control.z80
-    - match: '(^|\s+)\.(ERROR|SHIFT|WARNING)\s'
+    - match: '(?i)(^|\s+)\.(ERROR|SHIFT|WARNING)\s'
       scope: keyword.control.z80
-    - match: '(^|\s+)(IF|ELSE|ENDIF)\s'
+    - match: '(?i)(^|\s+)(IF|ELSE|ENDIF)\s'
       scope: keyword.control.z80
 
   directives_data:
-    - match: '\b(DEFB|DEFM|DEFS|DEFW|DB|DS|DW)\b'
+    - match: '(?i)\b(DEF[BMSW]|DB|DS|DW) ({{label}})\b'
+      captures:
+        1: storage.type.z80
+        2: variable.parameter.z80
+    - match: '(?i)\b(?:DEF[BMSW]|DB|DS|DW)\b'
       scope: storage.type.z80
 
   addresses:
