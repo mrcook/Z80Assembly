@@ -6,14 +6,15 @@ file_extensions: [asm, s, z80, ASM, S, Z80]
 scope: source.z80
 
 variables:
-  label: '\b[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]\b'
-  conditionals: '(?i)\b(?:NC|NZ|PE|PO|C|M|P|Z)\b'
-  binary: '(?:%[01]+|[01]+B)\b'
-  octal: '(?:&O[0-7]+|[0-7]+[OQ])\b'
-  hexidecimal: '(?:&[HX][0-9a-fA-F]{2}|[$#&][0-9a-fA-F]{2}|\b0X[0-9a-fA-F]{2}|\b0[a-fA-F]{2}H|\b[0-9]{2}H)\b'
-  decimal: '(?:[0-9]+D|[0-9]+)'
   address: '(?:&[HX][0-9a-fA-F]{4}|[$#&][0-9a-fA-F]{4}|\b0X[0-9a-fA-F]{4}|\b0[a-fA-F]{4}H|\b[0-9]{4}H|[0-9]{4,5}D)\b'
+  binary: '(?:%[01]+|[01]+B)\b'
+  comment: '(?:;.+)'
+  conditionals: '(?i)\b(?:NC|NZ|PE|PO|C|M|P|Z)\b'
+  decimal: '(?:[0-9]+D|[0-9]+)'
+  hexidecimal: '(?:&[HX][0-9a-fA-F]{2}|[$#&][0-9a-fA-F]{2}|\b0X[0-9a-fA-F]{2}|\b0[a-fA-F]{2}H|\b[0-9]{2}H)\b'
+  label: '\b[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]\b'
   number: '(?:{{binary}}|{{octal}}|{{hexidecimal}}|{{decimal}})'
+  octal: '(?:&O[0-7]+|[0-7]+[OQ])\b'
 
 contexts:
   # The prototype context is prepended to all contexts but those setting
@@ -80,7 +81,7 @@ contexts:
       scope: keyword.control.z80
 
   identifiers:
-    - match: '(?i)(^|\s+)(DEFL|EQU|MACRO|IRP|REPT|EXITM|ENDM)\s'
+    - match: '(?i)(^|\s+)(DEFL|MACRO|IRP|REPT|EXITM|ENDM)\s'
       scope: keyword.control.z80
 
   directives:
@@ -92,8 +93,19 @@ contexts:
       scope: keyword.control.z80
     - match: '(?i)(^|\s+)\.(ERROR|SHIFT|WARNING)\s'
       scope: keyword.control.z80
-    - match: '(?i)(^|\s+)(IF|ELSE|ENDIF)\s'
+    - match: '(?i)^\s*(IFNDEF|IFDEF|IF) +({{label}})\s+({{comment}})?$'
+      captures:
+        1: keyword.control.z80
+        2: variable.parameter.z80
+        3: comment.line.z80
+    - match: '(?i)(^|\s+)(ELSE|ENDIF)\s'
       scope: keyword.control.z80
+    - match: '(?i)^(.+?)\s+(EQU)\s+(.+?)(\s+{{comment}})?$'
+      captures:
+        1: variable.parameter.z80
+        2: keyword.control.z80
+        3: constant.numeric
+        4: comment.line.z80
 
   directives_data:
     - match: '(?i)\b(DEF[BMSW]|DB|DS|DW) ({{label}})\b'
@@ -132,7 +144,7 @@ contexts:
       pop: true
 
   labels:
-    - match: '^({{label}}):?$'
+    - match: '^({{label}}):?'
       comment: 'Label definition'
       captures:
         1: entity.name.function.z80
