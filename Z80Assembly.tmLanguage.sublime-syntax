@@ -2,7 +2,7 @@
 ---
 name: Z80 Assembly
 uuid: EDE7FFE3-F4DD-4BE1-94D9-ED7F973D2237
-file_extensions: [asm, s, z80, ASM, S, Z80]
+file_extensions: [asm, s, ASM, S]
 scope: source.z80
 
 variables:
