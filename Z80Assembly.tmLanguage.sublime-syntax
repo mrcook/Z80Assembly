@@ -55,7 +55,7 @@ contexts:
       scope: variable.other.z80
 
   opcodes:
-    - match: '(?i)\b(CALL|JP|JR|DJNZ)\s+({{conditionals}}),({{address}}|{{label}})\b'
+    - match: '(?i)\b(CALL|JP|JR|DJNZ)\s+({{conditionals}}), ?({{address}}|{{label}})\b'
       comment: 'Calls and jumps, with a condition'
       captures:
         1: keyword.control.z80
@@ -156,7 +156,7 @@ contexts:
     - match: '\({{label_multi}}\)'
       comment: 'Address of label'
       scope: variable.parameter.z80
-    - match: ',({{label_multi}})\b'
+    - match: ', ?({{label_multi}})\b'
       comment: 'Labels used in instructions'
       captures:
         1: variable.function.z80
