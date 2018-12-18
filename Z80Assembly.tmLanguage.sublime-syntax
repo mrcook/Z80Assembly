@@ -65,6 +65,11 @@ contexts:
       captures:
         1: keyword.control.z80
         2: variable.function.z80
+    - match: '(?i)\b(JP)\s+(\((HL|IX|IY)\))'
+      comment: 'Jumps using 16-bit registers'
+      captures:
+        1: keyword.control.z80
+        2: variable.parameter.z80
     - match: '(?i)\b(RET)(\s+{{conditionals}})?\b'
       comment: 'RETurn, with an optional condition'
       captures:
