@@ -40,16 +40,16 @@ contexts:
   registers:
     - match: '(?i)\b(AF|BC|DE|HL)'''
       comment: '16-bit shadow registers (note: escaped single quote)'
-      scope: variable.function.z80
+      scope: variable.other.z80
     - match: '(?i)\b(AF|BC|DE|HL|PC|SP|IX|IY)\b'
       comment: '16-bit registers'
-      scope: variable.function.z80
+      scope: variable.other.z80
     - match: '(?i)\((AF|BC|DE|HL|SP|IX|IY|{{number}}|{{label}})(?:[+-]{{number}})?\)'
       comment: 'Pointer to 16-bit register/address (incl. offsets)'
       scope: variable.parameter.z80
     - match: '(?i)\b(HX|HY|LX|LY)\b'
       comment: 'Undocumented 8-bit registers'
-      scope: variable.other.member.z80
+      scope: variable.other.z80
     - match: '(?i)\b([ABCDEFHILR]|IXH|IXL|IYH|IYL|LX|LY|YL|YH)\b'
       comment: '8-bit registers'
       scope: variable.other.z80
