@@ -75,7 +75,12 @@ contexts:
       captures:
         1: keyword.control.z80
         2: keyword.control.conditional.z80
-    - match: '(?i)\b(ADC|ADD|BIT|CCF|CP|CPL|CPD|CPDR|CPI|CPIR|DAA|DEC|DI|DJNZ|EI|EX|EXX|HALT|IM|IN|INC|IND|INDR|INF|INI|INIR||NEG|NOP|EXX|OR|OTDR|OTIR|OUT|OUTD|OUTI|POP|PUSH|RES|RETI|RETN|RL|RLA|RLC|RLCA|RLD|RR|RRA|RRC|RRCA|RRD|RST|SBC|SCF|SET|SLA|SLI|SLL|SRA|SRL|SUB)\b'
+    - match: '(?i)\b(RST) +(?:({{number}})|({{label}}))\b'
+      captures:
+        1: keyword.control.z80
+        2: constant.numeric
+        3: variable.function.z80
+    - match: '(?i)\b(ADC|ADD|BIT|CCF|CP|CPL|CPD|CPDR|CPI|CPIR|DAA|DEC|DI|DJNZ|EI|EX|EXX|HALT|IM|IN|INC|IND|INDR|INF|INI|INIR||NEG|NOP|EXX|OR|OTDR|OTIR|OUT|OUTD|OUTI|POP|PUSH|RES|RETI|RETN|RL|RLA|RLC|RLCA|RLD|RR|RRA|RRC|RRCA|RRD|SBC|SCF|SET|SLA|SLI|SLL|SRA|SRL|SUB)\b'
       scope: keyword.control.z80
     - match: '(?i)\b(LD|LDD|LDDR|LDI|LDIR)\b'
       scope: keyword.control.z80
